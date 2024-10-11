@@ -13,3 +13,27 @@ const GameBoard = (function () {
   }
   return { board };
 })();
+
+// players
+function Players() {
+  const playerOne = (() => {
+    const symbol = "X";
+    let score = 0;
+    const getScore = () => score;
+    const giveScore = () => score++;
+    return { symbol, getScore, giveScore };
+  })();
+
+  const playerTwo = (() => {
+    const symbol = "O";
+    let score = 0;
+    const getScore = () => score;
+    const giveScore = () => score++;
+    return { symbol, getScore, giveScore };
+  })();
+
+  return {
+    playerOne,
+    playerTwo,
+  };
+}
