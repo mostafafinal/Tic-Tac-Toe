@@ -17,19 +17,19 @@ const GameBoard = (function () {
 // players
 function Players() {
   const playerOne = (() => {
-    const symbol = "X";
+    const token = "X";
     let score = 0;
     const getScore = () => score;
     const giveScore = () => score++;
-    return { symbol, getScore, giveScore };
+    return { token, getScore, giveScore };
   })();
 
   const playerTwo = (() => {
-    const symbol = "O";
+    const token = "O";
     let score = 0;
     const getScore = () => score;
     const giveScore = () => score++;
-    return { symbol, getScore, giveScore };
+    return { token, getScore, giveScore };
   })();
 
   return {
@@ -37,3 +37,56 @@ function Players() {
     playerTwo,
   };
 }
+
+// game controller
+function GameController() {
+  const playerOne = Players().playerOne;
+  const playerTwo = Players().playerTwo;
+  const board = GameBoard.board;
+
+  let activePlayer = playerOne.token;
+
+  const playGame = (row, column) => {
+    if (board[row][column] == "") {
+      board[row][column] = activePlater;
+      checkWinner();
+    }
+  };
+
+  const checkWinner = () => {
+    const columns = [];
+    const ties = [];
+    for (let i = 0; i < board.length; i++) {
+      const mainArr = board.map((item) => item[i]);
+      columns.push(mainArr);
+    }
+    ties.push(board.map((item, index) => item[index]));
+    ties.push(board.reverse().map((item, index) => item[index]));
+
+    const checkRows = board.some((row) =>
+      row.every((token) => token == activePlayer)
+    );
+    const checkColumns = columns.some((column) =>
+      column.every((token) => token == activePlayer)
+    );
+    const checkTies = ties.some((tie) => tie.every((token) => token == "X"));
+    const checkDraw = board
+      .flat()
+      .every((token) => token == playerOne.token || token == playerTwo.token);
+
+    if (checkRows || checkColumns || checkTies) {
+      return `Player ${activePlayer} Wins!`;
+    }
+    if (checkDraw) {
+      return "Draw!";
+    }
+
+    switchTurns();
+    playGame();
+  };
+
+  return { playGame, activePlayer };
+}
+
+const board = GameBoard.board;
+console.log(board);
