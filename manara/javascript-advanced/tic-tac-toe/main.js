@@ -45,7 +45,7 @@ function GameController() {
   const board = GameBoard.board;
 
   let rounds = 3;
-  let activePlayer = playerOne.token;
+  let activePlayer = playerOne;
 
   const playRounds = () => {
     if (rounds) {
@@ -63,7 +63,7 @@ function GameController() {
 
   const playGame = (row, column) => {
     if (board[row][column] == "") {
-      board[row][column] = activePlayer;
+      board[row][column] = activePlayer.token;
       checkWinner();
     } else {
       playGame();
@@ -81,10 +81,10 @@ function GameController() {
     ties.push(board.reverse().map((item, index) => item[index]));
 
     const checkRows = board.some((row) =>
-      row.every((token) => token == activePlayer)
+      row.every((token) => token == activePlayer.token)
     );
     const checkColumns = columns.some((column) =>
-      column.every((token) => token == activePlayer)
+      column.every((token) => token == activePlayer.token)
     );
     const checkTies = ties.some((tie) => tie.every((token) => token == "X"));
     const checkDraw = board
@@ -92,7 +92,7 @@ function GameController() {
       .every((token) => token == playerOne.token || token == playerTwo.token);
 
     if (checkRows || checkColumns || checkTies) {
-      return `Player ${activePlayer} Wins!`;
+      return `Player ${activePlayer.token} Wins!`;
     }
     if (checkDraw) {
       return "Draw!";
@@ -103,10 +103,10 @@ function GameController() {
   };
 
   const switchTurns = () => {
-    activePlayer == playerOne.token
-      ? (activePlayer = playerTwo.token)
-      : (activePlayer = playerOne.token);
+    activePlayer == playerOne
+      ? (activePlayer = playerTwo)
+      : (activePlayer = playerOne);
   };
 
-  return { playGame, activePlayer };
+  return { playRounds, activePlayer };
 }
