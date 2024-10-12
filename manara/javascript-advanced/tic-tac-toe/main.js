@@ -85,6 +85,12 @@ function GameController() {
     playGame();
   };
 
+  const switchTurns = () => {
+    activePlayer == playerOne.token
+      ? (activePlayer = playerTwo.token)
+      : (activePlayer = playerOne.token);
+  };
+
   return { playGame, activePlayer };
 }
 
