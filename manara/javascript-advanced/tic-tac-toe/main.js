@@ -44,12 +44,29 @@ function GameController() {
   const playerTwo = Players().playerTwo;
   const board = GameBoard.board;
 
+  let rounds = 3;
   let activePlayer = playerOne.token;
+
+  const playRounds = () => {
+    if (rounds) {
+      rounds--;
+      playGame();
+    }
+    if (playerOne.getScore() > playerTwo.getScore()) {
+      return `Player ${playerOne.token} Is The Final Winner!`;
+    } else if (playerTwo.getScore() > playerOne.getScore()) {
+      return `Player ${playerTwo.token} Is The Final Winner!`;
+    } else {
+      return "Draw!";
+    }
+  };
 
   const playGame = (row, column) => {
     if (board[row][column] == "") {
-      board[row][column] = activePlater;
+      board[row][column] = activePlayer;
       checkWinner();
+    } else {
+      playGame();
     }
   };
 
@@ -93,6 +110,3 @@ function GameController() {
 
   return { playGame, activePlayer };
 }
-
-const board = GameBoard.board;
-console.log(board);
