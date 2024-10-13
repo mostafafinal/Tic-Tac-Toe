@@ -135,4 +135,28 @@ function DisplayController() {
 
   const roundsDOM = document.querySelector(".rounds");
   const boardDOM = document.querySelector(".game-board");
+
+  const updateScreen = () => {
+    boardDOM.innerHTML = "";
+    board.forEach((row, i) => {
+      row.forEach((_, j) => {
+        const token = document.createElement("button");
+        token.className = "token";
+        token.dataset.row = i;
+        token.dataset.column = j;
+        boardDOM.append(token);
+      });
+    });
+
+    currPlayer.textContent = "";
+    currPlayer.textContent = `Player: ${activePlayer.token}`;
+
+    playerOneScoreDOM.textContent = "";
+    playerTwoScoreDOM.textContent = "";
+    playerOneScoreDOM.textContent = playerOne.getScore();
+    playerTwoScoreDOM.textContent = playerTwo.getScore();
+
+    roundsDOM.textContent = "";
+    roundsDOM.textContent = `Rounds: ${rounds}`;
+  };
 }
