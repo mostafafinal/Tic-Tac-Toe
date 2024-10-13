@@ -42,14 +42,15 @@ function Players() {
 function GameController() {
   const playerOne = Players().playerOne;
   const playerTwo = Players().playerTwo;
-  const board = GameBoard.board;
+  let board = GameBoard.board.map((row) => [...row]);
 
   let rounds = 3;
   let activePlayer = playerOne;
 
   const playRounds = () => {
-    if (rounds) {
+    while (rounds) {
       rounds--;
+      board = GameBoard.board.map((row) => [...row]);
       playGame();
     }
     if (playerOne.getScore() > playerTwo.getScore()) {
