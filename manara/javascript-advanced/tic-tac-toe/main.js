@@ -87,7 +87,9 @@ function GameController() {
     const checkColumns = columns.some((column) =>
       column.every((token) => token == activePlayer.token)
     );
-    const checkTies = ties.some((tie) => tie.every((token) => token == "X"));
+    const checkTies = ties.some((tie) =>
+      tie.every((token) => token == activePlayer.token)
+    );
     const checkDraw = board
       .flat()
       .every((token) => token == playerOne.token || token == playerTwo.token);

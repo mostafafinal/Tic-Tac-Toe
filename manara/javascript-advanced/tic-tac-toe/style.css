@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100vh;
+}
+
+.container {
+  height: 100%;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+.game-title {
+  font-size: 5rem;
+}
+.game-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  .players-score {
+    font-size: 2rem;
+  }
+}
+.game-board {
+  display: flex;
+  flex-wrap: wrap;
+  height: 70%;
+  width: 100%;
+  background-color: black;
+}
+.token {
+  width: calc(100% / 3);
+  font-size: 10rem;
+  cursor: pointer;
+}
+.play {
+  margin-top: 1rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
