@@ -111,5 +111,28 @@ function GameController() {
       : (activePlayer = playerOne);
   };
 
-  return { playRounds, activePlayer };
+  return { playRounds, activePlayer, playerOne, playerTwo, board, rounds };
+}
+
+const play = document.querySelector(".play");
+play.addEventListener("click", DisplayController);
+
+function DisplayController() {
+  const playerOne = GameController().playerOne;
+  const playerTwo = GameController().playerTwo;
+  let board = GameController().board;
+  let rounds = GameController().rounds;
+  let activePlayer = GameController().activePlayer;
+
+  const currPlayer = document.querySelector(".active-player");
+
+  const playerOneDOM = document.querySelector(".player-one");
+  const playerTwoDOM = document.querySelector(".player-two");
+  const playerOneScoreDOM = document.querySelector(".player-one-score");
+  const playerTwoScoreDOM = document.querySelector(".player-two-score");
+  playerOneDOM.textContent = playerOne.token;
+  playerTwoDOM.textContent = playerTwo.token;
+
+  const roundsDOM = document.querySelector(".rounds");
+  const boardDOM = document.querySelector(".game-board");
 }
