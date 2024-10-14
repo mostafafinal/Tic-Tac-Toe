@@ -170,6 +170,11 @@ function DisplayController() {
     const playGame = game.playGame(row, column);
     console.log(playGame);
 
+    if (playGame !== "continue") {
+      checkRoundWinner(playGame);
+      boardDOM.removeEventListener("click", handleBoardClick);
+    }
+
     e.target.textContent = game.getActivePlayer().token;
     updateScreen();
     if (playGame !== "continue" && game.getRounds() == 3) {
@@ -178,9 +183,17 @@ function DisplayController() {
   }
 
   function handleRounds() {
-    const playRounds = game.playRounds();
-    console.log(playRounds);
+    boardDOM.addEventListener("click", handleBoardClick);
+    game.playRounds();
     updateScreen();
+  }
+
+  function checkRoundWinner(message) {
+    winningMessage.textContent = message;
+    document.body.prepend(winningMessage);
+    setTimeout(() => {
+      winningMessage.remove();
+    }, 2000);
   }
 
   function checkFinalWinner() {
