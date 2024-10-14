@@ -46,39 +46,40 @@ function GameController() {
   //   let board = GameBoard.board
   let board = GameBoard.board.map((row) => [...row]);
 
-  let rounds = 1;
+  // let rounds = 1;
   let activePlayer = playerOne;
 
-  const playRounds = () => {
-    while (rounds) {
-      console.log(board);
-      rounds--;
-      //   let board = GameBoard.board.map((row) => [...row]);
-      console.log(board);
-      playGame();
-    }
-    if (playerOne.getScore() > playerTwo.getScore()) {
-      console.log(`Player ${playerOne.token} Is The Final Winner!`);
-      return;
-      //   return `Player ${playerOne.token} Is The Final Winner!`;
-    } else if (playerTwo.getScore() > playerOne.getScore()) {
-      console.log(`Player ${playerTwo.token} Is The Final Winner!`);
-      return;
-      //   return `Player ${playerTwo.token} Is The Final Winner!`;
-    } else {
-      console.log("Draw");
-      return;
-      //   return "Draw!";
-    }
-  };
+  // const playRounds = () => {
+  //   while (rounds) {
+  //     console.log(board);
+  //     rounds--;
+  //     //   let board = GameBoard.board.map((row) => [...row]);
+  //     console.log(board);
+  //     playGame();
+  //   }
+  //   if (playerOne.getScore() > playerTwo.getScore()) {
+  //     console.log(`Player ${playerOne.token} Is The Final Winner!`);
+  //     return;
+  //     //   return `Player ${playerOne.token} Is The Final Winner!`;
+  //   } else if (playerTwo.getScore() > playerOne.getScore()) {
+  //     console.log(`Player ${playerTwo.token} Is The Final Winner!`);
+  //     return;
+  //     //   return `Player ${playerTwo.token} Is The Final Winner!`;
+  //   } else {
+  //     console.log("Draw");
+  //     return;
+  //     //   return "Draw!";
+  //   }
+  // };
 
-  const playGame = () => {
-    const row = prompt("Row: ");
-    const column = prompt("Column: ");
+  const playGame = (row, column) => {
     if (board[row][column] == "") {
       board[row][column] = activePlayer.token;
-      console.log(board);
-      checkWinner();
+      const gameStatus = checkWinner();
+      if (gameStatus === "continue") {
+        switchTurns();
+      }
+      return gameStatus;
     }
   };
 
@@ -108,38 +109,27 @@ function GameController() {
     if (checkRows || checkColumns || checkTies) {
       activePlayer.giveScore();
       console.log(`Player ${activePlayer.token} Wins!`);
-      return;
-      //   return `Player ${activePlayer.token} Wins!`;
+      return `Player ${activePlayer.token} Wins!`;
     }
     if (checkDraw) {
       console.log("Draw");
-      return;
-      //   return "Draw!";
+      return "Draw!";
     }
 
-    switchTurns();
-    playGame();
+    return "continue";
   };
 
   const switchTurns = () => {
-    activePlayer == playerOne
-      ? (activePlayer = playerTwo)
-      : (activePlayer = playerOne);
-    console.log(activePlayer.token);
+    activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
   };
 
-  return { playRounds, activePlayer };
-}
+  const getActivePlayer = () => activePlayer;
 
-const play = document.querySelector(".play");
-play.addEventListener("click", DisplayController);
+  return { playGame, board, getActivePlayer, playerOne, playerTwo };
+}
 
 function DisplayController() {
   const game = GameController();
-  const playerOne = game.playerOne;
-  const playerTwo = game.playerTwo;
-  let board = game.board;
-  let rounds = game.rounds;
 
   const currPlayer = document.querySelector(".active-player");
 
@@ -147,31 +137,31 @@ function DisplayController() {
   const playerTwoDOM = document.querySelector(".player-two");
   const playerOneScoreDOM = document.querySelector(".player-one-score");
   const playerTwoScoreDOM = document.querySelector(".player-two-score");
-  playerOneDOM.textContent = playerOne.token;
-  playerTwoDOM.textContent = playerTwo.token;
 
-  const roundsDOM = document.querySelector(".rounds");
+  // const roundsDOM = document.querySelector(".rounds");
   const boardDOM = document.querySelector(".game-board");
 
   const updateScreen = () => {
     boardDOM.innerHTML = "";
-    board.forEach((row, i) => {
+    game.board.forEach((row, i) => {
       row.forEach((_, j) => {
         const token = document.createElement("button");
         token.className = "token";
         token.dataset.row = i;
         token.dataset.column = j;
-        token.textContent = board[i][j];
+        token.textContent = game.board[i][j];
         boardDOM.append(token);
       });
     });
 
-    currPlayer.textContent = `Player: ${game.activePlayer.token}`;
+    currPlayer.textContent = `Player: ${game.getActivePlayer().token}`;
 
-    playerOneScoreDOM.textContent = playerOne.getScore();
-    playerTwoScoreDOM.textContent = playerTwo.getScore();
+    playerOneDOM.textContent = game.playerOne.token;
+    playerTwoDOM.textContent = game.playerTwo.token;
+    playerOneScoreDOM.textContent = game.playerOne.getScore();
+    playerTwoScoreDOM.textContent = game.playerTwo.getScore();
 
-    roundsDOM.textContent = `Rounds: ${game.rounds}`;
+    // roundsDOM.textContent = `Rounds: ${game.rounds}`;
   };
 
   boardDOM.addEventListener("click", handleBoardClick);
@@ -179,11 +169,17 @@ function DisplayController() {
   function handleBoardClick(e) {
     let row = e.target.dataset.row;
     let column = e.target.dataset.column;
-    console.log(game.activePlayer.token);
+
+    console.log(game.getActivePlayer().token);
     game.playGame(row, column);
+    e.target.textContent = game.getActivePlayer().token;
+    console.log(e.target.textContent);
     updateScreen();
   }
 
   // initial rendering
   updateScreen();
 }
+
+const play = document.querySelector(".play");
+play.addEventListener("click", DisplayController);
