@@ -126,6 +126,8 @@ function DisplayController() {
   const round = document.createElement("button");
   round.className = "play";
   round.textContent = "Next Round";
+  const winningMessage = document.createElement("div");
+  winningMessage.className = "overlay";
 
   const gameContainer = document.querySelector(".container");
   const playerOneDOM = document.querySelector(".player-one");
@@ -183,15 +185,19 @@ function DisplayController() {
 
   function checkFinalWinner() {
     if (game.playerOne.getScore() > game.playerTwo.getScore()) {
-      console.log("1");
-      return `Player ${game.playerOne.token} Is The Final Winner!`;
+      winningMessage.textContent = `Player ${game.playerOne.token} Is The Final Winner!`;
     } else if (game.playerTwo.getScore() > game.playerOne.getScore()) {
-      console.log("2");
-      return `Player ${game.playerTwo.token} Is The Final Winner!`;
+      winningMessage.textContent = `Player ${game.playerTwo.token} Is The Final Winner!`;
     } else {
-      console.log("3");
-      return "Draw!";
+      winningMessage.textContent = "Draw!";
     }
+
+    document.body.prepend(winningMessage);
+    setTimeout(() => {
+      winningMessage.remove();
+    }, 2000);
+    round.remove();
+    gameContainer.append(play);
   }
 
   play.remove();
