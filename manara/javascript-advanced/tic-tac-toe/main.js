@@ -51,21 +51,7 @@ function GameController() {
     if (rounds < 3) {
       rounds++;
       board = GameBoard.board.map((row) => [...row]);
-      console.log("new round");
-      return;
-    }
-    if (playerOne.getScore() > playerTwo.getScore()) {
-      console.log(`Player ${playerOne.token} Is The Final Winner!`);
-      return;
-      //   return `Player ${playerOne.token} Is The Final Winner!`;
-    } else if (playerTwo.getScore() > playerOne.getScore()) {
-      console.log(`Player ${playerTwo.token} Is The Final Winner!`);
-      return;
-      //   return `Player ${playerTwo.token} Is The Final Winner!`;
-    } else {
-      console.log("Draw");
-      return;
-      //   return "Draw!";
+      return "Next Round";
     }
   };
 
@@ -75,10 +61,7 @@ function GameController() {
       const gameStatus = checkWinner();
       if (gameStatus === "continue") {
         switchTurns();
-      } else {
-        playRounds();
       }
-
       return gameStatus;
     }
   };
@@ -108,11 +91,9 @@ function GameController() {
 
     if (checkRows || checkColumns || checkTies) {
       activePlayer.giveScore();
-      console.log(`Player ${activePlayer.token} Wins!`);
       return `Player ${activePlayer.token} Wins!`;
     }
     if (checkDraw) {
-      console.log("Draw");
       return "Draw!";
     }
 
@@ -129,6 +110,7 @@ function GameController() {
 
   return {
     playGame,
+    playRounds,
     getBoard,
     getActivePlayer,
     getRounds,
@@ -141,7 +123,11 @@ function DisplayController() {
   const game = GameController();
 
   const currPlayer = document.querySelector(".active-player");
+  const round = document.createElement("button");
+  round.className = "play";
+  round.textContent = "Next Round";
 
+  const gameContainer = document.querySelector(".container");
   const playerOneDOM = document.querySelector(".player-one");
   const playerTwoDOM = document.querySelector(".player-two");
   const playerOneScoreDOM = document.querySelector(".player-one-score");
@@ -174,15 +160,42 @@ function DisplayController() {
   };
 
   boardDOM.addEventListener("click", handleBoardClick);
+  round.addEventListener("click", handleRounds);
 
   function handleBoardClick(e) {
     let row = e.target.dataset.row;
     let column = e.target.dataset.column;
-    game.playGame(row, column);
+    const playGame = game.playGame(row, column);
+    console.log(playGame);
+
     e.target.textContent = game.getActivePlayer().token;
+    updateScreen();
+    if (playGame !== "continue" && game.getRounds() == 3) {
+      checkFinalWinner();
+    }
+  }
+
+  function handleRounds() {
+    const playRounds = game.playRounds();
+    console.log(playRounds);
     updateScreen();
   }
 
+  function checkFinalWinner() {
+    if (game.playerOne.getScore() > game.playerTwo.getScore()) {
+      console.log("1");
+      return `Player ${game.playerOne.token} Is The Final Winner!`;
+    } else if (game.playerTwo.getScore() > game.playerOne.getScore()) {
+      console.log("2");
+      return `Player ${game.playerTwo.token} Is The Final Winner!`;
+    } else {
+      console.log("3");
+      return "Draw!";
+    }
+  }
+
+  play.remove();
+  gameContainer.append(round);
   // initial rendering
   updateScreen();
 }
