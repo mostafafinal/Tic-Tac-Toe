@@ -168,16 +168,19 @@ function DisplayController() {
     let row = e.target.dataset.row;
     let column = e.target.dataset.column;
     const playGame = game.playGame(row, column);
-    console.log(playGame);
 
-    if (playGame !== "continue") {
+    if (playGame !== "continue" && playGame !== undefined) {
       checkRoundWinner(playGame);
       boardDOM.removeEventListener("click", handleBoardClick);
     }
 
     e.target.textContent = game.getActivePlayer().token;
     updateScreen();
-    if (playGame !== "continue" && game.getRounds() == 3) {
+    if (
+      playGame !== "continue" &&
+      game.getRounds() == 3 &&
+      playGame !== undefined
+    ) {
       checkFinalWinner();
     }
   }
