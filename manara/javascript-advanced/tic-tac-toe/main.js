@@ -42,35 +42,32 @@ function Players() {
 function GameController() {
   const playerOne = Players().playerOne;
   const playerTwo = Players().playerTwo;
-  //   const board = GameBoard.board;
-  //   let board = GameBoard.board
   let board = GameBoard.board.map((row) => [...row]);
 
-  // let rounds = 1;
+  let rounds = 1;
   let activePlayer = playerOne;
 
-  // const playRounds = () => {
-  //   while (rounds) {
-  //     console.log(board);
-  //     rounds--;
-  //     //   let board = GameBoard.board.map((row) => [...row]);
-  //     console.log(board);
-  //     playGame();
-  //   }
-  //   if (playerOne.getScore() > playerTwo.getScore()) {
-  //     console.log(`Player ${playerOne.token} Is The Final Winner!`);
-  //     return;
-  //     //   return `Player ${playerOne.token} Is The Final Winner!`;
-  //   } else if (playerTwo.getScore() > playerOne.getScore()) {
-  //     console.log(`Player ${playerTwo.token} Is The Final Winner!`);
-  //     return;
-  //     //   return `Player ${playerTwo.token} Is The Final Winner!`;
-  //   } else {
-  //     console.log("Draw");
-  //     return;
-  //     //   return "Draw!";
-  //   }
-  // };
+  const playRounds = () => {
+    if (rounds < 3) {
+      rounds++;
+      board = GameBoard.board.map((row) => [...row]);
+      console.log("new round");
+      return;
+    }
+    if (playerOne.getScore() > playerTwo.getScore()) {
+      console.log(`Player ${playerOne.token} Is The Final Winner!`);
+      return;
+      //   return `Player ${playerOne.token} Is The Final Winner!`;
+    } else if (playerTwo.getScore() > playerOne.getScore()) {
+      console.log(`Player ${playerTwo.token} Is The Final Winner!`);
+      return;
+      //   return `Player ${playerTwo.token} Is The Final Winner!`;
+    } else {
+      console.log("Draw");
+      return;
+      //   return "Draw!";
+    }
+  };
 
   const playGame = (row, column) => {
     if (board[row][column] == "") {
@@ -78,7 +75,10 @@ function GameController() {
       const gameStatus = checkWinner();
       if (gameStatus === "continue") {
         switchTurns();
+      } else {
+        playRounds();
       }
+
       return gameStatus;
     }
   };
@@ -123,9 +123,18 @@ function GameController() {
     activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
   };
 
+  const getRounds = () => rounds;
   const getActivePlayer = () => activePlayer;
+  const getBoard = () => board;
 
-  return { playGame, board, getActivePlayer, playerOne, playerTwo };
+  return {
+    playGame,
+    getBoard,
+    getActivePlayer,
+    getRounds,
+    playerOne,
+    playerTwo,
+  };
 }
 
 function DisplayController() {
@@ -138,18 +147,18 @@ function DisplayController() {
   const playerOneScoreDOM = document.querySelector(".player-one-score");
   const playerTwoScoreDOM = document.querySelector(".player-two-score");
 
-  // const roundsDOM = document.querySelector(".rounds");
+  const roundsDOM = document.querySelector(".rounds");
   const boardDOM = document.querySelector(".game-board");
 
   const updateScreen = () => {
     boardDOM.innerHTML = "";
-    game.board.forEach((row, i) => {
+    game.getBoard().forEach((row, i) => {
       row.forEach((_, j) => {
         const token = document.createElement("button");
         token.className = "token";
         token.dataset.row = i;
         token.dataset.column = j;
-        token.textContent = game.board[i][j];
+        token.textContent = game.getBoard()[i][j];
         boardDOM.append(token);
       });
     });
@@ -161,7 +170,7 @@ function DisplayController() {
     playerOneScoreDOM.textContent = game.playerOne.getScore();
     playerTwoScoreDOM.textContent = game.playerTwo.getScore();
 
-    // roundsDOM.textContent = `Rounds: ${game.rounds}`;
+    roundsDOM.textContent = `Rounds: ${game.getRounds()}`;
   };
 
   boardDOM.addEventListener("click", handleBoardClick);
@@ -169,11 +178,8 @@ function DisplayController() {
   function handleBoardClick(e) {
     let row = e.target.dataset.row;
     let column = e.target.dataset.column;
-
-    console.log(game.getActivePlayer().token);
     game.playGame(row, column);
     e.target.textContent = game.getActivePlayer().token;
-    console.log(e.target.textContent);
     updateScreen();
   }
 
