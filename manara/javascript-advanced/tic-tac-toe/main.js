@@ -42,32 +42,43 @@ function Players() {
 function GameController() {
   const playerOne = Players().playerOne;
   const playerTwo = Players().playerTwo;
+  //   const board = GameBoard.board;
+  //   let board = GameBoard.board
   let board = GameBoard.board.map((row) => [...row]);
 
-  let rounds = 3;
+  let rounds = 1;
   let activePlayer = playerOne;
 
   const playRounds = () => {
     while (rounds) {
+      console.log(board);
       rounds--;
-      board = GameBoard.board.map((row) => [...row]);
+      //   let board = GameBoard.board.map((row) => [...row]);
+      console.log(board);
       playGame();
     }
     if (playerOne.getScore() > playerTwo.getScore()) {
-      return `Player ${playerOne.token} Is The Final Winner!`;
+      console.log(`Player ${playerOne.token} Is The Final Winner!`);
+      return;
+      //   return `Player ${playerOne.token} Is The Final Winner!`;
     } else if (playerTwo.getScore() > playerOne.getScore()) {
-      return `Player ${playerTwo.token} Is The Final Winner!`;
+      console.log(`Player ${playerTwo.token} Is The Final Winner!`);
+      return;
+      //   return `Player ${playerTwo.token} Is The Final Winner!`;
     } else {
-      return "Draw!";
+      console.log("Draw");
+      return;
+      //   return "Draw!";
     }
   };
 
-  const playGame = (row, column) => {
+  const playGame = () => {
+    const row = prompt("Row: ");
+    const column = prompt("Column: ");
     if (board[row][column] == "") {
       board[row][column] = activePlayer.token;
+      console.log(board);
       checkWinner();
-    } else {
-      playGame();
     }
   };
 
@@ -79,7 +90,7 @@ function GameController() {
       columns.push(mainArr);
     }
     ties.push(board.map((item, index) => item[index]));
-    ties.push(board.reverse().map((item, index) => item[index]));
+    ties.push([...board].reverse().map((item, index) => item[index]));
 
     const checkRows = board.some((row) =>
       row.every((token) => token == activePlayer.token)
@@ -95,10 +106,15 @@ function GameController() {
       .every((token) => token == playerOne.token || token == playerTwo.token);
 
     if (checkRows || checkColumns || checkTies) {
-      return `Player ${activePlayer.token} Wins!`;
+      activePlayer.giveScore();
+      console.log(`Player ${activePlayer.token} Wins!`);
+      return;
+      //   return `Player ${activePlayer.token} Wins!`;
     }
     if (checkDraw) {
-      return "Draw!";
+      console.log("Draw");
+      return;
+      //   return "Draw!";
     }
 
     switchTurns();
@@ -109,20 +125,21 @@ function GameController() {
     activePlayer == playerOne
       ? (activePlayer = playerTwo)
       : (activePlayer = playerOne);
+    console.log(activePlayer.token);
   };
 
-  return { playRounds, activePlayer, playerOne, playerTwo, board, rounds };
+  return { playRounds, activePlayer };
 }
 
 const play = document.querySelector(".play");
 play.addEventListener("click", DisplayController);
 
 function DisplayController() {
-  const playerOne = GameController().playerOne;
-  const playerTwo = GameController().playerTwo;
-  let board = GameController().board;
-  let rounds = GameController().rounds;
-  let activePlayer = GameController().activePlayer;
+  const game = GameController();
+  const playerOne = game.playerOne;
+  const playerTwo = game.playerTwo;
+  let board = game.board;
+  let rounds = game.rounds;
 
   const currPlayer = document.querySelector(".active-player");
 
@@ -144,19 +161,29 @@ function DisplayController() {
         token.className = "token";
         token.dataset.row = i;
         token.dataset.column = j;
+        token.textContent = board[i][j];
         boardDOM.append(token);
       });
     });
 
-    currPlayer.textContent = "";
-    currPlayer.textContent = `Player: ${activePlayer.token}`;
+    currPlayer.textContent = `Player: ${game.activePlayer.token}`;
 
-    playerOneScoreDOM.textContent = "";
-    playerTwoScoreDOM.textContent = "";
     playerOneScoreDOM.textContent = playerOne.getScore();
     playerTwoScoreDOM.textContent = playerTwo.getScore();
 
-    roundsDOM.textContent = "";
-    roundsDOM.textContent = `Rounds: ${rounds}`;
+    roundsDOM.textContent = `Rounds: ${game.rounds}`;
   };
+
+  boardDOM.addEventListener("click", handleBoardClick);
+
+  function handleBoardClick(e) {
+    let row = e.target.dataset.row;
+    let column = e.target.dataset.column;
+    console.log(game.activePlayer.token);
+    game.playGame(row, column);
+    updateScreen();
+  }
+
+  // initial rendering
+  updateScreen();
 }
